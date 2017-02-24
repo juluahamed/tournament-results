@@ -73,12 +73,7 @@ def playerStandings():
     """
     db = connect()
     c = db.cursor()
-    c.execute("select players.id as id, players.name as name, CASE WHEN joined_table.wins IS NULL THEN 0 ELSE joined_table.wins END As wins, CASE WHEN joined_table.matches IS NULL THEN 0 ELSE joined_table.matches END AS matches "
-			"from players left join "
-			"(SELECT  CASE WHEN winners.winner IS NULL THEN losers.loser ELSE winners.winner END as id, CASE WHEN winners.a IS NULL THEN 0 ELSE winners.a END as wins, CASE WHEN losers.b IS NULL THEN 0 ELSE losers.b END as loses,( CASE WHEN winners.a IS NULL THEN 0 ELSE winners.a END + CASE WHEN losers.b IS NULL THEN 0 ELSE losers.b END) as matches FROM "
-			"(select winner, count(winner) as a from matches group by winner) as winners FULL outer join "
-			"(select loser, count(loser) as b from matches group by loser) as losers "
-			"on winners.winner = losers.loser order by winners.a desc) as joined_table on players.id = joined_table.id order by wins")
+    c.execute("SELECT id, name, wins, matches FROM player_standings")
     playerstanding = c.fetchall()
     db.close()
     return playerstanding
@@ -117,7 +112,7 @@ def swissPairings():
     db = connect()
     c = db.cursor()
     swisspairs = []
-    c.execute("SELECT id, name FROM p_standings")
+    c.execute("SELECT id, name FROM player_standings")
     while 1:
 		result = c.fetchmany(2)
 		if result:
